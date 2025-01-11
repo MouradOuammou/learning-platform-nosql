@@ -10,8 +10,9 @@ const { ObjectId } = require('mongodb');
  */
 async function findOneById(collection, id) {
   try {
+    if (!collection) throw new Error("La collection MongoDB est invalide.");
     if (!ObjectId.isValid(id)) {
-      throw new Error('ID invalide');
+      throw new Error('ID invalide.');
     }
 
     const document = await collection.findOne({ _id: new ObjectId(id) });
@@ -27,13 +28,19 @@ async function findOneById(collection, id) {
  * 
  * @param {Collection} collection - La collection MongoDB où insérer.
  * @param {Object} data - Les données à insérer.
- * @returns {Object} - Résultat de l'insertion.
+ * @returns {Object} - Le document inséré.
  * @throws {Error} - Si une erreur survient lors de l'insertion.
  */
 async function insertOne(collection, data) {
   try {
+    if (!collection) throw new Error("La collection MongoDB est invalide.");
+    if (!data || typeof data !== 'object') {
+      throw new Error("Les données à insérer doivent être un objet valide.");
+    }
+
     const result = await collection.insertOne(data);
-    return result.ops[0]; 
+    const insertedDocument = await collection.findOne({ _id: result.insertedId });
+    return insertedDocument; 
   } catch (error) {
     console.error('Erreur lors de l\'insertion:', error.message);
     throw error;
@@ -51,15 +58,25 @@ async function insertOne(collection, data) {
  */
 async function updateOneById(collection, id, update) {
   try {
+    if (!collection) throw new Error("La collection MongoDB est invalide.");
     if (!ObjectId.isValid(id)) {
-      throw new Error('ID invalide');
+      throw new Error('ID invalide.');
+    }
+    if (!update || typeof update !== 'object') {
+      throw new Error("Les données de mise à jour doivent être un objet valide.");
     }
 
     const result = await collection.updateOne(
       { _id: new ObjectId(id) },
       { $set: update }
     );
-    return result;
+
+    if (result.matchedCount === 0) {
+      throw new Error('Aucun document trouvé avec cet ID.');
+    }
+
+    const updatedDocument = await collection.findOne({ _id: new ObjectId(id) });
+    return updatedDocument;
   } catch (error) {
     console.error('Erreur lors de la mise à jour:', error.message);
     throw error;
@@ -76,12 +93,18 @@ async function updateOneById(collection, id, update) {
  */
 async function deleteOneById(collection, id) {
   try {
+    if (!collection) throw new Error("La collection MongoDB est invalide.");
     if (!ObjectId.isValid(id)) {
-      throw new Error('ID invalide');
+      throw new Error('ID invalide.');
     }
 
     const result = await collection.deleteOne({ _id: new ObjectId(id) });
-    return result;
+
+    if (result.deletedCount === 0) {
+      throw new Error('Aucun document trouvé à supprimer avec cet ID.');
+    }
+
+    return { message: 'Document supprimé avec succès.', id };
   } catch (error) {
     console.error('Erreur lors de la suppression:', error.message);
     throw error;
