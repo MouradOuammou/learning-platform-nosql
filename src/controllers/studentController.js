@@ -2,6 +2,7 @@ const { ObjectId } = require('mongodb');
 const db = require('../config/db');
 const mongoService = require('../services/mongoService');
 
+
 // Implémentation de la création d'un étudiant
 async function createStudent(req, res) {
   try {
@@ -54,9 +55,31 @@ async function getStudentStats(req, res) {
   }
 }
 
+async function getAllStudents(req, res) {
+  try {
+    if (!db || !db.collection) {
+      return res.status(500).json({
+        message: "La connexion à la base de données MongoDB n'a pas pu être établie.",
+      });
+    }
+
+    const studentsCollection = db.collection('students');
+    const students = await studentsCollection.find().toArray();
+    console.log(studentsCollection)
+
+    return res.json(students);
+  } catch (err) {
+    console.error("Erreur lors de la récupération des étudiants:", err);
+    return res.status(500).json({
+      message: "Échec de la récupération des étudiants.",
+      error: err.message,
+    });
+  }
+}
 // Export des contrôleurs
 module.exports = {
   createStudent,
   getStudent,
   getStudentStats,
+  getAllStudents, 
 };

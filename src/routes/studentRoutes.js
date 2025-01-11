@@ -11,4 +11,7 @@ router.get('/:id', studentController.getStudent);
 // Route pour obtenir des statistiques sur les étudiants
 router.get('/stats', studentController.getStudentStats);
 
+router.get('/', studentController.getAllStudents);  
+
+
 module.exports = router;
