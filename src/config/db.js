@@ -1,18 +1,24 @@
 const { MongoClient } = require("mongodb");
 const redis = require('redis');
-const config = require('./env'); // Ce fichier doit contenir les variables d'environnement
+const config = require('./env'); 
 
-let mongoClient, redisClient, db;
+let mongoClient, redisClient;
 
 async function connectMongo() {
   try {
     // Connexion à MongoDB avec l'URI et le nom de la base de données définis dans le fichier .env
+//    mongoClient = new MongoClient(process.env.MONGODB_URI);
     mongoClient = new MongoClient(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
 
     // Connexion à MongoDB
     await mongoClient.connect();
     db = mongoClient.db(process.env.MONGODB_DB_NAME); // Sélectionner la base de données
-
+    const studentsCollection = db.collection('students'); // Remplacer par le nom réel de ta collection
+    // Récupérer tous les documents de la collection
+    const students = await studentsCollection.find().toArray();
+    // Afficher les documents dans la console
+    console.log(students);
     console.log('Successfully connected to MongoDB');
   } catch (err) {
     console.error('Error connecting to MongoDB:', err);
@@ -83,5 +89,4 @@ module.exports = {
   checkConnections,
   mongoClient,
   redisClient,
-  db,
 };
