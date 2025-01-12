@@ -27,12 +27,18 @@ async function createStudent(req, res) {
 async function getStudent(req, res) {
   try {
     const { id } = req.params;
+    console.log("Received ID:", id);
     if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ message: 'Invalid student ID.' });
-    }
+      console.log("Invalid ID format."); // Ajout pour débogage
 
+      return res.status(400).json({ message: 'Invalid student ID.' });
+      
+    }
     const student = await mongoService.findOneById('students', id);
-    if (!student) {
+    console.log("Student data:", student);
+    if (!student) { 
+          console.log("Student data:", student);
+
       return res.status(404).json({ message: 'Student not found.' });
     }
 
