@@ -1,5 +1,4 @@
 const redis = require('redis');
-const util = require('util');
 
 let redisClient;
 
@@ -8,12 +7,11 @@ async function initializeRedis(redisUri) {
   try {
     redisClient = redis.createClient({ url: redisUri });
     await redisClient.connect();
-
     console.log('Connexion à Redis réussie.');
     return redisClient;
   } catch (error) {
     console.error('Erreur lors de la connexion à Redis:', error.message);
-    throw error;
+    throw error; // Propager l'erreur après avoir loggé
   }
 }
 
@@ -31,7 +29,7 @@ async function cacheData(key, data, ttl) {
     console.log(`Données mises en cache avec succès : clé=${key}`);
   } catch (error) {
     console.error('Erreur lors de la mise en cache:', error.message);
-    throw error;
+    throw error; // Propager l'erreur après avoir loggé
   }
 }
 
@@ -47,7 +45,7 @@ async function getCachedData(key) {
     return value ? JSON.parse(value) : null;
   } catch (error) {
     console.error('Erreur lors de la récupération des données en cache:', error.message);
-    throw error;
+    throw error; // Propager l'erreur après avoir loggé
   }
 }
 
@@ -62,7 +60,7 @@ async function deleteCache(key) {
     console.log(`Cache supprimé : clé=${key}`);
   } catch (error) {
     console.error('Erreur lors de la suppression du cache:', error.message);
-    throw error;
+    throw error; // Propager l'erreur après avoir loggé
   }
 }
 
@@ -78,7 +76,14 @@ async function cacheExists(key) {
     return exists === 1;
   } catch (error) {
     console.error('Erreur lors de la vérification du cache:', error.message);
-    throw error;
+    throw error; // Propager l'erreur après avoir loggé
+  }
+}
+
+// Assurez-vous que le client Redis est initialisé avant l'utilisation
+function ensureRedisClient() {
+  if (!redisClient) {
+    throw new Error('Redis client non initialisé. Veuillez appeler initializeRedis d\'abord.');
   }
 }
 
@@ -89,4 +94,5 @@ module.exports = {
   getCachedData,
   deleteCache,
   cacheExists,
+  ensureRedisClient,
 };

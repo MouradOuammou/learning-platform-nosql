@@ -1,45 +1,146 @@
 const express = require('express');
 const router = express.Router();
-const studentController = require('../controllers/studentController');
+const studentController = require('../controllers/studentController'); 
 
-// Route pour créer un étudiant
-router.post('/', async (req, res) => {
-  try {
-    await studentController.createStudent(req, res);
-  } catch (error) {
-    console.error("Erreur lors de la création de l'étudiant:", error);
-    res.status(500).json({ message: 'Erreur interne du serveur' });
-  }
-});
+/**
+ * @swagger
+ * tags:
+ *   name: Students
+ *   description: API for managing students in the platform
+ */
 
-// Route pour obtenir un étudiant par ID
-router.get('/:id', async (req, res) => {
-  try {
-    await studentController.getStudent(req, res);
-  } catch (error) {
-    console.error("Erreur lors de la récupération de l'étudiant:", error);
-    res.status(500).json({ message: 'Erreur interne du serveur' });
-  }
-});
+/**
+ * @swagger
+ * /students:
+ *   post:
+ *     summary: Create a new student in the platform
+ *     tags: [Students]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: Unique identifier for the student
+ *               name:
+ *                 type: string
+ *                 description: Full name of the student
+ *               age:
+ *                 type: integer
+ *                 description: Age of the student
+ *               course:
+ *                 type: string
+ *                 description: Course the student is enrolled in
+ *             required:
+ *               - name
+ *               - age
+ *               - course
+ *     responses:
+ *       201:
+ *         description: Student successfully created
+ *       400:
+ *         description: Invalid input data
+ */
+router.post('/', studentController.createStudent);
 
-// Route pour obtenir des statistiques sur les étudiants
-router.get('/stats', async (req, res) => {
-  try {
-    await studentController.getStudentStats(req, res);
-  } catch (error) {
-    console.error("Erreur lors de la récupération des statistiques des étudiants:", error);
-    res.status(500).json({ message: 'Erreur interne du serveur' });
-  }
-});
+/**
+ * @swagger
+ * /students/{id}:
+ *   get:
+ *     summary: Get student details by ID
+ *     tags: [Students]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique identifier of the student
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the student details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   description: Student's unique identifier
+ *                 name:
+ *                   type: string
+ *                   description: Student's full name
+ *                 age:
+ *                   type: integer
+ *                   description: Age of the student
+ *                 course:
+ *                   type: string
+ *                   description: Course the student is enrolled in
+ *       404:
+ *         description: Student not found with the given ID
+ */
+router.get('/:id', studentController.getStudent);
 
-// Route pour récupérer tous les étudiants
-router.get('/', async (req, res) => {
-  try {
-    await studentController.getAllStudents(req, res);
-  } catch (error) {
-    console.error("Erreur lors de la récupération des étudiants:", error);
-    res.status(500).json({ message: 'Erreur interne du serveur' });
-  }
-});
+/**
+ * @swagger
+ * /students/stats:
+ *   get:
+ *     summary: Retrieve overall statistics about the students
+ *     tags: [Students]
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the student statistics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalStudents:
+ *                   type: integer
+ *                   description: Total number of students in the platform
+ *                   example: 100
+ *                 averageAge:
+ *                   type: number
+ *                   format: float
+ *                   description: Average age of the students
+ *                   example: 22.5
+ *       500:
+ *         description: Error retrieving student statistics
+ */
+router.get('/stats', studentController.getStudentStats);
+
+/**
+ * @swagger
+ * /students:
+ *   get:
+ *     summary: Get a list of all students
+ *     tags: [Students]
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved a list of all students
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     description: Student's unique identifier
+ *                   name:
+ *                     type: string
+ *                     description: Student's full name
+ *                   age:
+ *                     type: integer
+ *                     description: Student's age
+ *                   course:
+ *                     type: string
+ *                     description: Course the student is enrolled in
+ */
+router.get('/', studentController.getAllStudents);
 
 module.exports = router;

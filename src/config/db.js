@@ -2,27 +2,18 @@ const { MongoClient } = require("mongodb");
 const redis = require('redis');
 const config = require('./env'); 
 
-let mongoClient, redisClient;
+let mongoClient, redisClient, db;
 
 async function connectMongo() {
   try {
     // Connexion à MongoDB avec l'URI et le nom de la base de données définis dans le fichier .env
-//    mongoClient = new MongoClient(process.env.MONGODB_URI);
     mongoClient = new MongoClient(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-
-
     // Connexion à MongoDB
     await mongoClient.connect();
-    db = mongoClient.db(process.env.MONGODB_DB_NAME); // Sélectionner la base de données
-    const studentsCollection = db.collection('students'); // Remplacer par le nom réel de ta collection
-    // Récupérer tous les documents de la collection
-    const students = await studentsCollection.find().toArray();
-    // Afficher les documents dans la console
-    console.log(students);
+    db = mongoClient.db(process.env.MONGODB_DB_NAME); // Sélectionner la base de donnéess
     console.log('Successfully connected to MongoDB');
   } catch (err) {
     console.error('Error connecting to MongoDB:', err);
-    // Tentative de reconnexion après 5 secondes si l'erreur persiste
     setTimeout(connectMongo, 5000); // Réessaie de se connecter après 5 secondes
   }
 }
@@ -34,13 +25,11 @@ async function connectRedis() {
     redisClient = redis.createClient({
       url: process.env.REDIS_URI,
     });
-
     // Connexion à Redis
     await redisClient.connect();
     console.log('Successfully connected to Redis');
   } catch (err) {
     console.error('Error connecting to Redis:', err);
-    // Tentative de reconnexion après 5 secondes si l'erreur persiste
     setTimeout(connectRedis, 5000); // Réessaie de se connecter après 5 secondes
   }
 }
@@ -67,19 +56,26 @@ async function disconnectRedis() {
 
 // Fonction pour vérifier la connexion à MongoDB et Redis
 async function checkConnections() {
-  if (mongoClient.isConnected()) {
+  // Vérification de la connexion MongoDB
+  if (mongoClient && mongoClient.topology && mongoClient.topology.isConnected()) {
     console.log('MongoDB is connected.');
   } else {
     console.log('MongoDB is not connected.');
   }
 
-  if (redisClient.isOpen) {
+  // Vérification de la connexion Redis
+  if (redisClient && redisClient.isOpen) {
     console.log('Redis is connected.');
   } else {
     console.log('Redis is not connected.');
   }
 }
-
+function getDbObject() {
+  if (!db) {
+    throw new Error("Database not initialized yet.");
+  }
+  return db;
+}
 // Exporter les fonctions et les clients pour être utilisés ailleurs
 module.exports = {
   connectMongo,
@@ -87,6 +83,5 @@ module.exports = {
   disconnectMongo,
   disconnectRedis,
   checkConnections,
-  mongoClient,
-  redisClient,
+  getDbObject,
 };
