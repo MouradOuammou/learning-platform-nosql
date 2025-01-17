@@ -11,7 +11,7 @@ const options = {
       "The platform is designed to facilitate the learning experience, track student progress, and provide course-related information."   },
     servers: [
       {
-        url: "http://localhost:3002", 
+        url: "http://localhost:3000", 
       },
     ],
   },
@@ -20,4 +20,6 @@ const options = {
 
 const swagger = swaggerJsDoc(options);
 
-module.exports = swagger;
+module.exports = swagger; 
+
+
