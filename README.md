@@ -1,60 +1,121 @@
-# Projet de fin de module NoSQL
-
-Pour ce projet, vous allez créer une petite API qui va servir de backend à une plateforme d'apprentissage en ligne. J'ai préparé la structure du projet avec une organisation professionnelle du code, comme vous pouvez le constater dans ce dépôt Github.
-
-Commençons par l'organisation pratique :
-
-1. Création de votre dépôt :
-   - Sur Github.com
-   - Créez un nouveau dépôt public
-   - Nommez-le "learning-platform-nosql"
-   - Ne l'initialisez pas avec un README pour le moment
-
-2. Configuration de votre environnement local :
-   ```bash
-   # Clonez mon dépôt template (ce dépôt)
-   git clone https://github.com/pr-daaif/learning-platform-template
+# OUAMMOU MOURAD
    
-   # Renommez le dépôt origin
-   cd learning-platform-template
-   git remote remove origin
-   
-   # Ajoutez votre dépôt comme nouvelle origine
-   git remote add origin https://github.com/[votre-compte]/learning-platform-nosql
-   
-   # Poussez le code vers votre dépôt
-   git push -u origin main
-   ```
+# Learning Platform - NoSQL
 
-3. Installation des dépendances :
-   ```bash
-   npm install
-   ```
+## Description
+**Learning Platform - NoSQL** est un projet backend développé avec **Node.js**, utilisant **MongoDB** pour le stockage des données et **Redis** pour la gestion du cache. Le projet permet de gérer des étudiants et des cours tout en fournissant des statistiques sur les étudiants. La documentation et les tests d'API sont réalisés avec **Swagger**.
 
-Je vous propose une structure de code qui suit les bonnes pratiques de développement. Vous trouverez dans le code des commentaires avec des **questions qui vous guideront dans votre réflexion**. Ces questions sont importantes car elles vous aideront à comprendre les choix d'architecture.
+## Fonctionnalités
+- Ajouter des étudiants
+- Récupérer tous les étudiants (avec mise en cache via Redis)
+- Ajouter des cours
+- Associer des étudiants à des cours
+- Générer des statistiques sur les étudiants
+- Documentation interactive et tests via Swagger
 
-### Aspects professionnels à noter :
-- Utilisation des variables d'environnement pour la configuration
-- Séparation claire des responsabilités (routes, contrôleurs, services)
-- Gestion propre des connexions aux bases de données
-- Organisation modulaire du code
-- Gestion des erreurs et des cas limites
-- Documentation du code
+## Technologies utilisées
+- **Node.js** : Framework backend
+- **Express.js** : Framework minimaliste pour construire les API REST
+- **MongoDB** : Base de données NoSQL pour le stockage des données
+- **Redis** : Système de mise en cache pour optimiser les performances
+- **Swagger** : Génération et tests de la documentation API
+- **npm** : Gestionnaire de paquets pour Node.js
 
-### Pour le rendu, voici ce que j'attends :
-1. Un dépôt public sur Github avec un historique de commits clair
-2. Un README.md qui explique :
-   - Comment installer et lancer le projet
-   - La structure du projet
-   - Les choix techniques que vous avez faits
-   - Les réponses aux questions posées dans les commentaires
-3. Le code complété avec tous les TODOs implémentés
+## Installation
 
-### Je vous conseille de procéder étape par étape :
-1. Commencez par lire et comprendre la structure du projet
-2. Répondez aux questions des commentaires dans le README
-3. Implémentez progressivement les TODOs
-4. Testez chaque fonctionnalité au fur et à mesure
-5. Documentez vos choix et vos réflexions en ajoutant des copies d'écrans à votre fichier README.md
+### Prérequis
+- **Node.js** installé sur votre machine
+- **MongoDB** en cours d'exécution
+- **Redis** installé et configuré
+- **npm** (livré avec Node.js)
 
-#### Bon courage
+### Étapes d'installation
+
+1. **Cloner le projet**
+```bash
+git clone https://github.com/MouradOuammou/learning-platform-nosql.git
+cd learning-platform-nosql
+```
+
+2. **Installer les dépendances**
+```bash
+# Dépendances principales
+npm install express mongoose redis
+
+# Installation de Swagger
+npm install swagger-jsdoc swagger-ui-express
+```
+
+3. **Configurer les variables d'environnement**
+Créez un fichier `.env` à la racine du projet :
+```env
+PORT=3000
+DB_URI=mongodb://localhost:27017/learning-platform
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+```
+
+4. **Lancer le serveur**
+```bash
+npm start
+```
+
+## API Routes
+
+### Routes Students
+- **POST** `/students` - Créer un étudiant
+- **GET** `/students` - Obtenir tous les étudiants
+- **GET** `/students/:id` - Obtenir un étudiant spécifique
+- **GET** `/students/stats` - Obtenir les statistiques des étudiants
+
+### Routes Courses
+- **POST** `/courses` - Créer un cours
+- **GET** `/courses` - Obtenir tous les cours
+- **GET** `/courses/:id` - Obtenir un cours spécifique
+- **GET** `/courses/stats` - Obtenir les statistiques des cours
+
+> **J'ai utilisé Fake API pour le test en utilisant ce site : [Fake API_Mockaroo](https://www.mockaroo.com//)**
+
+### Documentation API
+Accédez à la documentation Swagger à l'adresse :
+`http://localhost:3000/api-docs`
+![Swagger interface](https://github.com/MouradOuammou/learning-platform-nosql/blob/main/Swagger%20Interface.png)
+
+
+## API Routes & Exemples
+
+### Routes Students
+
+#### Créer un étudiant (POST /students)
+- Création d'un nouvel étudiant dans le système
+
+Création d'un étudiant
+
+#### Obtenir tous les étudiants (GET /students)
+- Liste de tous les étudiants avec mise en cache Redis
+
+#### Obtenir un étudiant spécifique (GET /students/:id)
+
+#### Statistiques des étudiants (GET /students/stats)
+
+
+### Routes Courses
+
+#### Créer un cours (POST /courses)
+- Création d'un nouveau cours
+
+![Création d'un cours](https://github.com/MouradOuammou/learning-platform-nosql/blob/main/Course.png)
+
+![Suite](https://github.com/MouradOuammou/learning-platform-nosql/blob/main/Responses.png)
+
+![Dans MongoDb](https://github.com/MouradOuammou/learning-platform-nosql/blob/main/Dans%20Mongo.png)
+
+#### Obtenir tous les cours (GET /courses)
+- Liste de tous les cours disponibles
+
+#### Obtenir un cours spécifique (GET /courses/:id)
+- Détails d'un cours particulier
+
+#### Statistiques des cours (GET /courses/stats)
+- Statistiques globales sur les cours
+
