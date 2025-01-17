@@ -13,7 +13,7 @@ async function createStudent(req, res) {
     }
 
     // Création de l'étudiant
-    const student = { name, age, course/*, createdAt: new Date()*/ };
+    const student = { name, age, course, createdAt: new Date()};
     const result = await mongoService.create('students', student);
 
     // Réponse avec succès
