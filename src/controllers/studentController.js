@@ -6,12 +6,7 @@ const redisService = require('../services/redisService');
 // Implémentation de la création d'un étudiant
 async function createStudent(req, res) {
   try {
-    const { name, age, course } = req.body;
-
-    // Validation des champs
-    if (!name || !age || !course) {
-      return res.status(400).json({ message: 'Name, age, and course are required.' });
-    }
+    const {id , name, age, course } = req.body;
 
     if (typeof age !== 'number' || age < 18 || age > 100) {
       return res.status(400).json({ message: 'Age must be a number between 18 and 100.' });
@@ -19,7 +14,7 @@ async function createStudent(req, res) {
 
     // Création de l'étudiant
     const student = { name, age, course/*, createdAt: new Date()*/ };
-    const result = await mongoService.insertOne('students', student);
+    const result = await mongoService.create('students', student);
 
     // Réponse avec succès
     res.status(201).json({ message: 'Student created successfully.', student: result });

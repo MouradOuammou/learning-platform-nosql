@@ -7,7 +7,7 @@ let mongoClient, redisClient, db;
 async function connectMongo() {
   try {
     // Connexion à MongoDB avec l'URI et le nom de la base de données définis dans le fichier .env
-    mongoClient = new MongoClient(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+    mongoClient = new MongoClient(process.env.MONGODB_URI);
     // Connexion à MongoDB
     await mongoClient.connect();
     db = mongoClient.db(process.env.MONGODB_DB_NAME); // Sélectionner la base de donnéess
